@@ -4,11 +4,12 @@
 #include <QListWidget>
 #include <QClipboard>
 #include <QSystemTrayIcon>
+#include <QStringList>
+#include <QListWidgetItem>
 #include <QShortcut>
-#include <QList>
-#include <QThread>
 
-class GlobalHotkeyManager; // Forward declaration
+// Forward declaration to avoid including the header here
+class GlobalHotkeyManager;
 
 class MainWindow : public QMainWindow
 {
@@ -18,25 +19,23 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+    // --- ADDED: This slot will be triggered by the hotkey signal ---
+    void toggleVisibility();
+
 private slots:
     void onItemActivated(QListWidgetItem *item);
     void onClipboardChanged();
-    void onHotkeyActivated(); // The slot that listens for the hotkey
     void clearHistory();
 
 private:
     void createTrayIcon();
 
-    // UI elements
     QListWidget *listWidget;
+    QClipboard *clipboard;
     QSystemTrayIcon *trayIcon;
 
-    // Data
-    QClipboard *clipboard;
+    // Use a deque or list for efficient front insertion
     QList<QString> history;
-    static const int MAX_HISTORY_SIZE = 20;
-
-    // Threading for the hotkey manager
-    QThread hotkeyThread;
-    GlobalHotkeyManager *hotkeyManager;
+    const int MAX_HISTORY_SIZE = 20;
 };

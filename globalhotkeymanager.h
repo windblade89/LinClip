@@ -1,30 +1,30 @@
-#ifndef GLOBALHOTKEYMANAGER_H
-#define GLOBALHOTKEYMANAGER_H
+#pragma once
 
 #include <QObject>
-#include <memory> // Required for std::unique_ptr
+#include <memory> // For std::unique_ptr
 
-// Forward declare the private implementation class.
-// This hides all X11 details from any file that includes this header.
+// This is the PIMPL pattern. The header is clean of any X11 includes.
 class HotkeyPrivate;
 
 class GlobalHotkeyManager : public QObject
 {
     Q_OBJECT
+
 public:
     explicit GlobalHotkeyManager(QObject *parent = nullptr);
     ~GlobalHotkeyManager();
 
 public slots:
-    void run(); // This will contain the listening loop
+    void run();
+    // --- ADDED: This slot will be connected to the application's aboutToQuit signal ---
+    void stop();
 
 signals:
-    void hotkeyActivated();
+    // --- ADDED: This signal is emitted when the hotkey is pressed ---
+    void hotkeyPressed();
     void finished();
 
 private:
-    // A single, smart pointer to our private implementation.
-    std::unique_ptr<HotkeyPrivate> d;
+    std::unique_ptr<HotkeyPrivate> d; // Pointer to implementation
+    volatile bool m_stop = false;
 };
-
-#endif // GLOBALHOTKEYMANAGER_H

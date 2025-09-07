@@ -26,28 +26,31 @@ QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 namespace {
 struct qt_meta_stringdata_GlobalHotkeyManager_t {
-    uint offsetsAndSizes[10];
+    uint offsetsAndSizes[12];
     char stringdata0[20];
-    char stringdata1[16];
+    char stringdata1[14];
     char stringdata2[1];
     char stringdata3[9];
     char stringdata4[4];
+    char stringdata5[5];
 };
 #define QT_MOC_LITERAL(ofs, len) \
     uint(sizeof(qt_meta_stringdata_GlobalHotkeyManager_t::offsetsAndSizes) + ofs), len 
 Q_CONSTINIT static const qt_meta_stringdata_GlobalHotkeyManager_t qt_meta_stringdata_GlobalHotkeyManager = {
     {
         QT_MOC_LITERAL(0, 19),  // "GlobalHotkeyManager"
-        QT_MOC_LITERAL(20, 15),  // "hotkeyActivated"
-        QT_MOC_LITERAL(36, 0),  // ""
-        QT_MOC_LITERAL(37, 8),  // "finished"
-        QT_MOC_LITERAL(46, 3)   // "run"
+        QT_MOC_LITERAL(20, 13),  // "hotkeyPressed"
+        QT_MOC_LITERAL(34, 0),  // ""
+        QT_MOC_LITERAL(35, 8),  // "finished"
+        QT_MOC_LITERAL(44, 3),  // "run"
+        QT_MOC_LITERAL(48, 4)   // "stop"
     },
     "GlobalHotkeyManager",
-    "hotkeyActivated",
+    "hotkeyPressed",
     "",
     "finished",
-    "run"
+    "run",
+    "stop"
 };
 #undef QT_MOC_LITERAL
 } // unnamed namespace
@@ -58,7 +61,7 @@ Q_CONSTINIT static const uint qt_meta_data_GlobalHotkeyManager[] = {
       10,       // revision
        0,       // classname
        0,    0, // classinfo
-       3,   14, // methods
+       4,   14, // methods
        0,    0, // properties
        0,    0, // enums/sets
        0,    0, // constructors
@@ -66,17 +69,19 @@ Q_CONSTINIT static const uint qt_meta_data_GlobalHotkeyManager[] = {
        2,       // signalCount
 
  // signals: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   32,    2, 0x06,    1 /* Public */,
-       3,    0,   33,    2, 0x06,    2 /* Public */,
+       1,    0,   38,    2, 0x06,    1 /* Public */,
+       3,    0,   39,    2, 0x06,    2 /* Public */,
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       4,    0,   34,    2, 0x0a,    3 /* Public */,
+       4,    0,   40,    2, 0x0a,    3 /* Public */,
+       5,    0,   41,    2, 0x0a,    4 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
     QMetaType::Void,
 
  // slots: parameters
+    QMetaType::Void,
     QMetaType::Void,
 
        0        // eod
@@ -91,11 +96,13 @@ Q_CONSTINIT const QMetaObject GlobalHotkeyManager::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_GlobalHotkeyManager_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<GlobalHotkeyManager, std::true_type>,
-        // method 'hotkeyActivated'
+        // method 'hotkeyPressed'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'finished'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'run'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'stop'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
     >,
     nullptr
@@ -107,16 +114,17 @@ void GlobalHotkeyManager::qt_static_metacall(QObject *_o, QMetaObject::Call _c, 
         auto *_t = static_cast<GlobalHotkeyManager *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->hotkeyActivated(); break;
+        case 0: _t->hotkeyPressed(); break;
         case 1: _t->finished(); break;
         case 2: _t->run(); break;
+        case 3: _t->stop(); break;
         default: ;
         }
     } else if (_c == QMetaObject::IndexOfMethod) {
         int *result = reinterpret_cast<int *>(_a[0]);
         {
             using _t = void (GlobalHotkeyManager::*)();
-            if (_t _q_method = &GlobalHotkeyManager::hotkeyActivated; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
+            if (_t _q_method = &GlobalHotkeyManager::hotkeyPressed; *reinterpret_cast<_t *>(_a[1]) == _q_method) {
                 *result = 0;
                 return;
             }
@@ -151,19 +159,19 @@ int GlobalHotkeyManager::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     if (_id < 0)
         return _id;
     if (_c == QMetaObject::InvokeMetaMethod) {
-        if (_id < 3)
+        if (_id < 4)
             qt_static_metacall(this, _c, _id, _a);
-        _id -= 3;
+        _id -= 4;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
-        if (_id < 3)
+        if (_id < 4)
             *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
-        _id -= 3;
+        _id -= 4;
     }
     return _id;
 }
 
 // SIGNAL 0
-void GlobalHotkeyManager::hotkeyActivated()
+void GlobalHotkeyManager::hotkeyPressed()
 {
     QMetaObject::activate(this, &staticMetaObject, 0, nullptr);
 }

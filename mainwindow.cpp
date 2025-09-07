@@ -1,12 +1,18 @@
 #include "mainwindow.h"
-#include "globalhotkeymanager.h" // Include the manager
+#include "globalhotkeymanager.h"
 
-// Standard Qt headers
-#include <QGuiApplication>
-#include <QMenu>
+// Qt headers
 #include <QApplication>
-#include <QCursor>
+#include <QClipboard>
+#include <QGuiApplication>
+#include <QListWidget>
+#include <QMenu>
+#include <QShortcut>
 #include <QStatusBar>
+#include <QSystemTrayIcon>
+#include <QThread>
+#include <QCursor>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -14,16 +20,26 @@ MainWindow::MainWindow(QWidget *parent)
     setWindowTitle("Clipboard History");
     setFixedSize(400, 500);
 
-    // Set up the main list widget
     listWidget = new QListWidget(this);
     setCentralWidget(listWidget);
+
+    // --- NEW: Apply styling for padding between items ---
+    listWidget->setStyleSheet(
+        "QListWidget::item {"
+        "  padding: 6px 8px;"
+        "}"
+        "QListWidget::item:selected {"
+        "  background-color: #3377dd;" // A nice blue for selection
+        "  color: white;"
+        "}"
+        );
+
     connect(listWidget, &QListWidget::itemDoubleClicked, this, &MainWindow::onItemActivated);
 
-    // Monitor the system clipboard for changes
     clipboard = QGuiApplication::clipboard();
     connect(clipboard, &QClipboard::dataChanged, this, &MainWindow::onClipboardChanged);
 
-    // --- In-window Shortcuts (only active when window is focused) ---
+    // Shortcuts for when the window is active
     QShortcut *enterShortcut = new QShortcut(QKeySequence(Qt::Key_Return), this);
     connect(enterShortcut, &QShortcut::activated, [this]() {
         if (listWidget->currentItem()) {
@@ -39,77 +55,69 @@ MainWindow::MainWindow(QWidget *parent)
 
     createTrayIcon();
 
-    // --- Global Hotkey Setup (runs in a separate thread) ---
-    hotkeyManager = new GlobalHotkeyManager();
-    hotkeyManager->moveToThread(&hotkeyThread);
+    // Setup and start the global hotkey manager in a separate thread
+    QThread* hotkeyThread = new QThread();
+    GlobalHotkeyManager* hotkeyManager = new GlobalHotkeyManager();
+    hotkeyManager->moveToThread(hotkeyThread);
 
-    // Connect signals and slots for thread-safe communication
-    connect(&hotkeyThread, &QThread::started, hotkeyManager, &GlobalHotkeyManager::run);
-    connect(hotkeyManager, &GlobalHotkeyManager::finished, &hotkeyThread, &QThread::quit);
-    connect(hotkeyManager, &GlobalHotkeyManager::finished, hotkeyManager, &GlobalHotkeyManager::deleteLater);
-    connect(&hotkeyThread, &QThread::finished, &hotkeyThread, &QThread::deleteLater);
-    connect(hotkeyManager, &GlobalHotkeyManager::hotkeyActivated, this, &MainWindow::onHotkeyActivated);
+    connect(hotkeyThread, &QThread::started, hotkeyManager, &GlobalHotkeyManager::run);
+    connect(hotkeyManager, &GlobalHotkeyManager::hotkeyPressed, this, &MainWindow::toggleVisibility);
+    connect(qApp, &QCoreApplication::aboutToQuit, hotkeyManager, &GlobalHotkeyManager::stop);
+    connect(hotkeyManager, &GlobalHotkeyManager::finished, hotkeyThread, &QThread::quit);
+    connect(hotkeyThread, &QThread::finished, hotkeyThread, &QThread::deleteLater);
+    connect(hotkeyThread, &QThread::finished, hotkeyManager, &GlobalHotkeyManager::deleteLater);
 
-    hotkeyThread.start();
+    hotkeyThread->start();
 }
 
 MainWindow::~MainWindow()
 {
-    // Cleanly stop the hotkey thread when the main window is destroyed
-    hotkeyThread.requestInterruption();
-    hotkeyThread.quit();
-    hotkeyThread.wait();
+    // The hotkey manager and its thread will be cleaned up automatically
+    // via the aboutToQuit signal connections.
 }
 
-// This slot is triggered safely from the hotkey manager's thread
-void MainWindow::onHotkeyActivated()
-{
-    if (isVisible()) {
-        hide();
-    } else {
-        // Position the window at the current mouse cursor location
-        move(QCursor::pos());
-        // Bring the window to the front
-        activateWindow();
-        raise();
-        show();
-    }
-}
-
+// ---------------------
+// Slots
+// ---------------------
 void MainWindow::onItemActivated(QListWidgetItem *item)
 {
     if (item) {
-        clipboard->setText(item->text());
-        hide(); // Hide the window after a selection is made
+        // --- UPDATED: Get the original full text from history ---
+        int rowIndex = listWidget->row(item);
+        if (rowIndex >= 0 && rowIndex < history.size()) {
+            clipboard->setText(history.at(rowIndex));
+            hide(); // Hide after selection
+        }
     }
 }
 
 void MainWindow::onClipboardChanged()
 {
     QString newText = clipboard->text();
-    // Add new, non-empty, and unique text to the history
     if (!newText.isEmpty() && (history.empty() || history.front() != newText))
     {
         history.push_front(newText);
-        // Keep the history size limited to the max size
         if (history.size() > MAX_HISTORY_SIZE) {
             history.pop_back();
         }
 
-        // Refresh the list widget with the updated history
         listWidget->clear();
         for (const QString &text : history) {
-            listWidget->addItem(text);
+            // --- UPDATED: Only add the first line to the list view ---
+            QString firstLine = text.split('\n').first().trimmed();
+            listWidget->addItem(firstLine);
         }
     }
 }
 
+// ---------------------
+// Tray Icon
+// ---------------------
 void MainWindow::createTrayIcon()
 {
     trayIcon = new QSystemTrayIcon(this);
-    // Use a standard system icon for "copy"
     trayIcon->setIcon(QIcon::fromTheme("edit-copy"));
-    trayIcon->setToolTip("Clipboard Manager");
+    trayIcon->setToolTip("LinClip Clipboard Manager");
 
     QMenu *menu = new QMenu(this);
     QAction *quitAction = new QAction("Quit", this);
@@ -120,9 +128,32 @@ void MainWindow::createTrayIcon()
     trayIcon->show();
 }
 
+// ---------------------
+// Helpers
+// ---------------------
+void MainWindow::toggleVisibility()
+{
+    if (isVisible()) {
+        hide();
+    } else {
+        // Refresh list content before showing
+        listWidget->clear();
+        for (const QString &text : history) {
+            QString firstLine = text.split('\n').first().trimmed();
+            listWidget->addItem(firstLine);
+        }
+
+        // Show at mouse position
+        move(QCursor::pos());
+        activateWindow();
+        raise();
+        show();
+    }
+}
+
 void MainWindow::clearHistory()
 {
     history.clear();
     listWidget->clear();
-    statusBar()->showMessage("History cleared.", 2000); // Show a confirmation message
+    statusBar()->showMessage("History cleared.", 2000);
 }
