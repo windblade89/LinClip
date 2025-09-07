@@ -12,18 +12,39 @@
 #include <QSystemTrayIcon>
 #include <QThread>
 #include <QCursor>
+#include <QVBoxLayout> // --- ADDED: We need this for the layout ---
 
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 {
-    setWindowTitle("Clipboard History");
+    setWindowTitle("LinClip History");
     setFixedSize(400, 500);
 
-    listWidget = new QListWidget(this);
-    setCentralWidget(listWidget);
+    // --- START OF WINDOW PADDING CHANGES ---
 
-    // --- NEW: Apply styling for padding between items ---
+    // 1. Create a generic container widget to be the new central widget
+    QWidget *centralContainer = new QWidget(this);
+
+    // 2. Create a layout to manage the widgets inside the container
+    QVBoxLayout *mainLayout = new QVBoxLayout(centralContainer);
+
+    // 3. Set the padding (margins) around the layout's contents
+    mainLayout->setContentsMargins(5, 5, 5, 5); // 5px padding on all sides
+
+    // 4. Create the list widget (from your code)
+    listWidget = new QListWidget(this);
+
+    // 5. Add the list widget to our new padded layout
+    mainLayout->addWidget(listWidget);
+
+    // 6. Set the container (which now has the layout and padding) as the central widget
+    setCentralWidget(centralContainer);
+
+    // --- END OF WINDOW PADDING CHANGES ---
+
+
+    // Your existing, superior styling for items
     listWidget->setStyleSheet(
         "QListWidget::item {"
         "  padding: 6px 8px;"
@@ -82,7 +103,7 @@ MainWindow::~MainWindow()
 void MainWindow::onItemActivated(QListWidgetItem *item)
 {
     if (item) {
-        // --- UPDATED: Get the original full text from history ---
+        // Get the original full text from history
         int rowIndex = listWidget->row(item);
         if (rowIndex >= 0 && rowIndex < history.size()) {
             clipboard->setText(history.at(rowIndex));
@@ -97,13 +118,13 @@ void MainWindow::onClipboardChanged()
     if (!newText.isEmpty() && (history.empty() || history.front() != newText))
     {
         history.push_front(newText);
-        if (history.size() > MAX_HISTORY_SIZE) {
+        if (history.size() > 20) { // MAX_HISTORY_SIZE
             history.pop_back();
         }
 
         listWidget->clear();
         for (const QString &text : history) {
-            // --- UPDATED: Only add the first line to the list view ---
+            // Only add the first line to the list view
             QString firstLine = text.split('\n').first().trimmed();
             listWidget->addItem(firstLine);
         }
