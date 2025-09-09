@@ -28,12 +28,12 @@ namespace {
 struct qt_meta_stringdata_MainWindow_t {
     uint offsetsAndSizes[16];
     char stringdata0[11];
-    char stringdata1[17];
+    char stringdata1[16];
     char stringdata2[1];
-    char stringdata3[16];
-    char stringdata4[17];
-    char stringdata5[5];
-    char stringdata6[19];
+    char stringdata3[17];
+    char stringdata4[5];
+    char stringdata5[19];
+    char stringdata6[17];
     char stringdata7[13];
 };
 #define QT_MOC_LITERAL(ofs, len) \
@@ -41,21 +41,21 @@ struct qt_meta_stringdata_MainWindow_t {
 Q_CONSTINIT static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
         QT_MOC_LITERAL(0, 10),  // "MainWindow"
-        QT_MOC_LITERAL(11, 16),  // "toggleVisibility"
-        QT_MOC_LITERAL(28, 0),  // ""
-        QT_MOC_LITERAL(29, 15),  // "onItemActivated"
-        QT_MOC_LITERAL(45, 16),  // "QListWidgetItem*"
-        QT_MOC_LITERAL(62, 4),  // "item"
-        QT_MOC_LITERAL(67, 18),  // "onClipboardChanged"
+        QT_MOC_LITERAL(11, 15),  // "onItemActivated"
+        QT_MOC_LITERAL(27, 0),  // ""
+        QT_MOC_LITERAL(28, 16),  // "QListWidgetItem*"
+        QT_MOC_LITERAL(45, 4),  // "item"
+        QT_MOC_LITERAL(50, 18),  // "onClipboardChanged"
+        QT_MOC_LITERAL(69, 16),  // "toggleVisibility"
         QT_MOC_LITERAL(86, 12)   // "clearHistory"
     },
     "MainWindow",
-    "toggleVisibility",
-    "",
     "onItemActivated",
+    "",
     "QListWidgetItem*",
     "item",
     "onClipboardChanged",
+    "toggleVisibility",
     "clearHistory"
 };
 #undef QT_MOC_LITERAL
@@ -75,14 +75,14 @@ Q_CONSTINIT static const uint qt_meta_data_MainWindow[] = {
        0,       // signalCount
 
  // slots: name, argc, parameters, tag, flags, initial metatype offsets
-       1,    0,   38,    2, 0x0a,    1 /* Public */,
-       3,    1,   39,    2, 0x08,    2 /* Private */,
+       1,    1,   38,    2, 0x08,    1 /* Private */,
+       5,    0,   41,    2, 0x08,    3 /* Private */,
        6,    0,   42,    2, 0x08,    4 /* Private */,
        7,    0,   43,    2, 0x08,    5 /* Private */,
 
  // slots: parameters
+    QMetaType::Void, 0x80000000 | 3,    4,
     QMetaType::Void,
-    QMetaType::Void, 0x80000000 | 4,    5,
     QMetaType::Void,
     QMetaType::Void,
 
@@ -98,12 +98,12 @@ Q_CONSTINIT const QMetaObject MainWindow::staticMetaObject = { {
     qt_incomplete_metaTypeArray<qt_meta_stringdata_MainWindow_t,
         // Q_OBJECT / Q_GADGET
         QtPrivate::TypeAndForceComplete<MainWindow, std::true_type>,
-        // method 'toggleVisibility'
-        QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'onItemActivated'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         QtPrivate::TypeAndForceComplete<QListWidgetItem *, std::false_type>,
         // method 'onClipboardChanged'
+        QtPrivate::TypeAndForceComplete<void, std::false_type>,
+        // method 'toggleVisibility'
         QtPrivate::TypeAndForceComplete<void, std::false_type>,
         // method 'clearHistory'
         QtPrivate::TypeAndForceComplete<void, std::false_type>
@@ -117,9 +117,9 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
         auto *_t = static_cast<MainWindow *>(_o);
         (void)_t;
         switch (_id) {
-        case 0: _t->toggleVisibility(); break;
-        case 1: _t->onItemActivated((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
-        case 2: _t->onClipboardChanged(); break;
+        case 0: _t->onItemActivated((*reinterpret_cast< std::add_pointer_t<QListWidgetItem*>>(_a[1]))); break;
+        case 1: _t->onClipboardChanged(); break;
+        case 2: _t->toggleVisibility(); break;
         case 3: _t->clearHistory(); break;
         default: ;
         }

@@ -1,14 +1,15 @@
 #pragma once
 
 #include <QMainWindow>
-#include <QListWidget>
-#include <QClipboard>
-#include <QSystemTrayIcon>
-#include <QStringList>
-#include <QListWidgetItem>
-#include <QShortcut>
+#include <QList>
+#include <QVariant> // ADDED: For storing text or images
 
-// Forward declaration to avoid including the header here
+// Forward declarations to keep header clean
+class QListWidget;
+class QListWidgetItem;
+class QClipboard;
+class QSystemTrayIcon;
+class QThread;
 class GlobalHotkeyManager;
 
 class MainWindow : public QMainWindow
@@ -19,23 +20,24 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-public slots:
-    // --- ADDED: This slot will be triggered by the hotkey signal ---
-    void toggleVisibility();
-
 private slots:
     void onItemActivated(QListWidgetItem *item);
     void onClipboardChanged();
+    void toggleVisibility();
     void clearHistory();
 
 private:
     void createTrayIcon();
+    void updateListWidget(); // ADDED: Helper to refresh the UI
 
     QListWidget *listWidget;
     QClipboard *clipboard;
     QSystemTrayIcon *trayIcon;
 
-    // Use a deque or list for efficient front insertion
-    QList<QString> history;
-    const int MAX_HISTORY_SIZE = 20;
+    // --- MODIFIED: History now stores QVariant (text or image) ---
+    QList<QVariant> history;
+
+    // Hotkey manager members (no changes here)
+    QThread* hotkeyThread;
+    GlobalHotkeyManager* hotkeyManager;
 };
