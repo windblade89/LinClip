@@ -28,8 +28,6 @@ Next, clone this project's code from GitHub to your computer:
 git clone https://github.com/windblade89/LinClip.git  
 cd LinClip
 
-*(Remember to replace YOUR\_USERNAME with your actual GitHub username\!)*
-
 ### **Step 3: Compile the Application**
 
 Now, we'll use the qmake tool to prepare the build files and make to compile the code into an executable.
