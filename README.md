@@ -25,7 +25,7 @@ sudo apt install qt6-base-dev build-essential libx11-dev libxcb1-dev git
 
 Next, clone this project's code from GitHub to your computer:
 
-git clone \[https://github.com/YOUR\_USERNAME/LinClip.git\](https://github.com/YOUR\_USERNAME/LinClip.git)  
+git clone https://github.com/YOUR\_USERNAME/LinClip.git  
 cd LinClip
 
 *(Remember to replace YOUR\_USERNAME with your actual GitHub username\!)*
